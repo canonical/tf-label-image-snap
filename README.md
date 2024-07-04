@@ -1,7 +1,7 @@
 # TensorFlow Lite label image snap
 
-This example bundles an example TensorFlow Lite script with all the required dependencies.
-The base of this snap is core24, which is based on the current latest LTS release of Ubuntu, namely Ubuntu 24.04 Noble Numbat, and should provide the longest support.
+This snap bundles an example TensorFlow Lite script with all the required dependencies.
+The base of this snap is core24, which is based on Ubuntu 24.04 LTS, with up to 12 years of support.
 The script is based on the [TensorFlow Lite Python image classification demo](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/examples/python).
 
 Core24 ships with Python 3.12, but TensorFlow Lite does not currently work with Python 3.12 due to dependencies that are [not yet updated](https://github.com/tensorflow/tensorflow/issues/62003).
