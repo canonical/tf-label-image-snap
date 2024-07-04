@@ -23,17 +23,19 @@ INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
 time: 28.502ms
 ```
 
-Any other image can be specified using the `-i` argument. The snap has read access to the user's home directory, so any path under $HOME (or `~`) can be specified. Example:
+Any other image can be specified using the `-i` argument.
+The snap has read access to the user's home directory, so any path under `$HOME` can be specified.
+Example with [a parrot](https://commons.wikimedia.org/wiki/File:Parrot.red.macaw.1.arp.750pix.jpg):
 
 ```
-$ tf-label-image -i ~/Downloads/parrot.jpeg
+$ tf-label-image -i ~/Downloads/Parrot.red.macaw.1.arp.750pix.jpg 
 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
-0.999824: 89:macaw
-0.000119: 91:lorikeet
-0.000013: 603:horizontal bar, high bar
-0.000012: 703:parallel bars, bars
-0.000010: 97:toucan
-time: 25.774ms
+0.939399: 89:macaw
+0.060436: 91:lorikeet
+0.000062: 90:sulphur-crested cockatoo, Kakatoe galerita, Cacatua galerita
+0.000057: 24:vulture
+0.000023: 88:African grey, African gray, Psittacus erithacus
+time: 28.257ms
 ```
 
 ## Advanced usage
