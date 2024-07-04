@@ -1,0 +1,78 @@
+name: tf-label-image
+summary: Label an image using TensorFlow Lite
+description: THis snap provides a utility that consumes an image file and outputs a lits of labels with percentage certainty.
+version: 0.0.1
+
+confinement: strict
+grade: devel
+
+base: core24
+
+platforms:
+  amd64:
+  arm64:
+
+package-repositories:
+ - type: apt
+   ppa: deadsnakes/ppa
+
+parts:
+  python38:
+    plugin: nil
+    stage-packages:
+      - python3.8-full
+      - python3.8-distutils
+      - python3.8-venv
+      - python3-pip
+
+  python-dependencies:
+    after: [python38]
+    plugin: python
+    build-environment:
+      - PARTS_PYTHON_INTERPRETER: python3.8
+    python-packages:
+      - numpy<2
+      - pillow
+      - tflite-runtime
+    source: .
+
+  scripts:
+    plugin: dump
+    source: .
+    override-build: |
+      cp label_image_lite.py $CRAFT_PART_INSTALL/
+
+  model:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/mobilenet_v1_2018_02_22/mobilenet_v1_1.0_224.tgz
+    source-type: tar
+    override-build: |
+      chmod 777 mobilenet_v1_1.0_224.tflite
+      cp mobilenet_v1_1.0_224.tflite $CRAFT_PART_INSTALL/
+
+  labels:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/mobilenet_v1_1.0_224_frozen.tgz
+    source-type: tar
+    override-build: |
+      chmod 777 labels.txt
+      cp labels.txt $CRAFT_PART_INSTALL/
+
+  test-data:
+    plugin: dump
+    source: https://raw.githubusercontent.com/tensorflow/tensorflow/master/tensorflow/lite/examples/label_image/testdata/grace_hopper.bmp
+    source-type: file
+    override-build: |
+      chmod 777 grace_hopper.bmp
+      cp grace_hopper.bmp $CRAFT_PART_INSTALL/
+
+apps:
+  label-image:
+    plugs:
+      - home
+    command: bin/python3 $SNAP/label_image_lite.py
+
+  python:
+    plugs:
+      - home
+    command: bin/python3
