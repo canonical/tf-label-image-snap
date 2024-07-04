@@ -5,6 +5,7 @@ version: 0.0.1
 
 confinement: strict
 grade: devel
+license: Apache-2.0
 
 base: core24
 
