@@ -52,7 +52,7 @@ jobs:
         id: snapcraft
         with:
           architecture: arm64
-          snapcraft-channel: candidate
+          snapcraft-channel: edge
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
