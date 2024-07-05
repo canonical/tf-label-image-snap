@@ -1,6 +1,6 @@
 name: tf-label-image
 summary: Label an image using TensorFlow Lite
-description: THis snap provides a utility that consumes an image file and outputs a lits of labels with percentage certainty.
+description: This snap provides a utility that consumes an image file and outputs a list of labels, along with a certainty percentage.
 version: 0.0.1
 
 confinement: strict
