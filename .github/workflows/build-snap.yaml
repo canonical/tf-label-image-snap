@@ -31,30 +31,3 @@ jobs:
           name: ${{ env.ARTIFACT_AMD64 }}
           path: ${{ steps.snapcraft.outputs.snap }}
           if-no-files-found: error
-
-  build-arm64:
-    # We do not start the long running arm64 build unless the amd64 build has succeeded.
-    needs: build-amd64
-    outputs:
-      snap: ${{ steps.snapcraft.outputs.snap }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup QEMU
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: arm64
-
-      - name: Build snap
-        uses: soumyaDghosh/snapcraft-multiarch-action@master
-        id: snapcraft
-        with:
-          architecture: arm64
-
-      - name: Upload artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ env.ARTIFACT_ARM64 }}
-          path: ${{ steps.snapcraft.outputs.snap }}
