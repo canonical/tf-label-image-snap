@@ -8,6 +8,30 @@ Core24 ships with Python 3.12, but TensorFlow Lite does not currently work with 
 The most reliable combination of dependencies that work on AMD64 and ARM64 are based on Python 3.8.
 This snap includes Python 3.8 from the [deadsnakes PPA](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa).
 
+This snap was tested on the following platforms, but should work on any platform that runs SnapD:
+
+- Ubuntu Desktop 24.04 on AMD64 workstation
+- Ubuntu Server 24.04 on Raspberry Pi 5
+- Ubuntu Core 24 on Raspberry Pi 5
+
+## Build the snap
+
+This snap is not available via the Snap Store.
+You will need to build it from source yourself.
+Clone this repository and then run the following command in the cloned directory:
+
+```
+snapcraft -v
+```
+
+We recommend building on Ubuntu Desktop 24.0 or Ubuntu Server 24.04.
+
+## Install the snap
+
+```
+snap install --dangerous ./tf-label-image_*.snap
+```
+
 ## How to use
 
 If the app is run without any arguments, it will use the included `mobilenet v1-1.0-224` model and classify an image of [Grace Hopper](https://en.wikipedia.org/wiki/Grace_Hopper) that is included in the snap.
@@ -28,7 +52,7 @@ The snap has read access to the user's home directory, so any path under `$HOME`
 Example with [a parrot](https://commons.wikimedia.org/wiki/File:Parrot.red.macaw.1.arp.750pix.jpg):
 
 ```
-$ tf-label-image -i ~/Downloads/Parrot.red.macaw.1.arp.750pix.jpg 
+$ tf-label-image -i ~/Downloads/Parrot.red.macaw.1.arp.750pix.jpg
 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
 0.939399: 89:macaw
 0.060436: 91:lorikeet
@@ -85,3 +109,7 @@ Type "help", "copyright", "credits" or "license" for more information.
 '2.14.0'
 >>>
 ```
+
+## Further examples
+
+More advanced TensorFlow Lite snap examples can be found [here](https://github.com/canonical/tf-lite-examples-snap).
