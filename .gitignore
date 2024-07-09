@@ -1,0 +1,7 @@
+*.snap
+.venv
+venv
+squashfs-root
+grace_hopper.bmp
+labels.txt
+mobilenet*
