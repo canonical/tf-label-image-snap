@@ -1,7 +1,7 @@
 name: tf-label-image
 summary: Label an image using TensorFlow Lite
 description: This snap provides a utility that consumes an image file and outputs a list of labels, along with a certainty percentage.
-version: 0.0.1
+version: 0.0.2
 
 confinement: strict
 grade: devel
@@ -25,9 +25,10 @@ parts:
       - python3.8-distutils
       - python3.8-venv
       - python3-pip
+      - libusb-1.0-0
 
   python-dependencies:
-    after: [python38]
+    after: [ python38 ]
     plugin: python
     build-environment:
       - PARTS_PYTHON_INTERPRETER: python3.8
@@ -35,15 +36,21 @@ parts:
       - numpy<2
       - pillow
       - tflite-runtime
+      - opencv-python-headless
+      - tflite_support
     source: .
 
   scripts:
     plugin: dump
     source: .
     override-build: |
-      cp label_image_lite.py $CRAFT_PART_INSTALL/
+      cp help.py $CRAFT_PART_INSTALL/
+      cp image_label.py $CRAFT_PART_INSTALL/
+      cp image_detect.py $CRAFT_PART_INSTALL/
+      cp camera_detect.py $CRAFT_PART_INSTALL/
+      cp camera_detect_stream.py $CRAFT_PART_INSTALL/
 
-  model:
+  label-model:
     plugin: dump
     source: https://storage.googleapis.com/download.tensorflow.org/models/mobilenet_v1_2018_02_22/mobilenet_v1_1.0_224.tgz
     source-type: tar
@@ -61,6 +68,24 @@ parts:
       chmod a=r labels.txt
       cp labels.txt $CRAFT_PART_INSTALL/
 
+  detect-model:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/lite-model_efficientdet_lite0_detection_metadata_1.tflite
+    source-type: file
+    source-checksum: sha256/2e04c53bfeac0ac2a30c057c7e2a777594ce39baaac35a92f74fb1e8c4fc4e0b
+    override-build: |
+      chmod a=r lite-model_efficientdet_lite0_detection_metadata_1.tflite
+      cp lite-model_efficientdet_lite0_detection_metadata_1.tflite $CRAFT_PART_INSTALL/efficientdet_lite0.tflite
+
+  detect-model-tpu:
+    plugin: dump
+    source: https://storage.googleapis.com/download.tensorflow.org/models/tflite/task_library/object_detection/rpi/efficientdet_lite0_edgetpu_metadata.tflite
+    source-type: file
+    source-checksum: sha256/a3cc0baf52939ca20f45c70b3e8d2e7cb2f66a6f46576024f5301f9794cf5d78
+    override-build: |
+      chmod a=r efficientdet_lite0_edgetpu_metadata.tflite
+      cp efficientdet_lite0_edgetpu_metadata.tflite $CRAFT_PART_INSTALL/efficientdet_lite0_edgetpu.tflite
+
   test-data:
     plugin: dump
     source: https://raw.githubusercontent.com/tensorflow/tensorflow/master/tensorflow/lite/examples/label_image/testdata/grace_hopper.bmp
@@ -72,9 +97,29 @@ parts:
 
 apps:
   tf-label-image:
+    command: bin/python3 $SNAP/help.py
+
+  image-label:
     plugs:
       - home
-    command: bin/python3 $SNAP/label_image_lite.py
+    command: bin/python3 $SNAP/image_label.py
+
+  image-detect:
+    plugs:
+      - home
+    command: bin/python3 $SNAP/image_detect.py
+
+  camera-detect:
+    plugs:
+      - home
+      - camera
+    command: bin/python3 $SNAP/camera_detect.py
+
+  camera-detect-stream:
+    plugs:
+      - home
+      - camera
+    command: bin/python3 $SNAP/camera_detect_stream.py
 
   python:
     plugs:

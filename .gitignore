@@ -5,3 +5,5 @@ squashfs-root
 grace_hopper.bmp
 labels.txt
 mobilenet*
+*.tflite
+.idea

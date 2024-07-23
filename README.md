@@ -32,12 +32,19 @@ We recommend building on Ubuntu Desktop 24.0 or Ubuntu Server 24.04.
 snap install --dangerous ./tf-label-image_*.snap
 ```
 
+You also need to connect the camera plug for the camera examples to work:
+```
+sudo snap connect tf-label-image:camera
+```
+
 ## How to use
+
+### Label an image
 
 If the app is run without any arguments, it will use the included `mobilenet v1-1.0-224` model and classify an image of [Grace Hopper](https://en.wikipedia.org/wiki/Grace_Hopper) that is included in the snap.
 
 ```
-$ tf-label-image
+$ tf-label-image.image-label
 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
 0.919721: 653:military uniform
 0.017762: 907:Windsor tie
@@ -52,7 +59,7 @@ The snap has read access to the user's home directory, so any path under `$HOME`
 Example with [a parrot](https://commons.wikimedia.org/wiki/File:Parrot.red.macaw.1.arp.750pix.jpg):
 
 ```
-$ tf-label-image -i ~/Downloads/Parrot.red.macaw.1.arp.750pix.jpg
+$ tf-label-image.image-label -i ~/Downloads/Parrot.red.macaw.1.arp.750pix.jpg
 INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
 0.939399: 89:macaw
 0.060436: 91:lorikeet
@@ -60,6 +67,12 @@ INFO: Created TensorFlow Lite XNNPACK delegate for CPU.
 0.000057: 24:vulture
 0.000023: 88:African grey, African gray, Psittacus erithacus
 time: 28.257ms
+```
+
+### Detect objects in image
+
+```
+tf-label-image.image-detect
 ```
 
 ## Advanced usage

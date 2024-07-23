@@ -12,16 +12,14 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# ==============================================================================
-"""label_image for tflite."""
-
+"""Label a provided image"""
 import argparse
-import time
 import os
+import time
 
 import numpy as np
-from PIL import Image
 import tflite_runtime.interpreter as tflite
+from PIL import Image
 
 
 def load_labels(filename):
@@ -34,17 +32,17 @@ if __name__ == '__main__':
     parser.add_argument(
         '-i',
         '--image',
-        default=os.getenv('SNAP')+'/grace_hopper.bmp',
+        default=os.getenv('SNAP', '.') + '/grace_hopper.bmp',
         help='image to be classified')
     parser.add_argument(
         '-m',
         '--model_file',
-        default=os.getenv('SNAP')+'/mobilenet_v1_1.0_224.tflite',
+        default=os.getenv('SNAP', '.') + '/mobilenet_v1_1.0_224.tflite',
         help='.tflite model to be executed')
     parser.add_argument(
         '-l',
         '--label_file',
-        default=os.getenv('SNAP')+'/labels.txt',
+        default=os.getenv('SNAP', '.') + '/labels.txt',
         help='name of file containing labels')
     parser.add_argument(
         '--input_mean',
