@@ -157,8 +157,10 @@ def index():
             <title>TensorFlow Lite stream</title>
           </head>
           <body>
-            <h1>Object detection</h1>
-            <img src="{{ url_for('video_feed') }}" alt="stream">
+            <div style="width: 100vw; height: 100vh; text-align: center;">
+              <img style="object-fit: contain; max-width: 100%; height: 100%;" 
+                src="{{ url_for('video_feed') }}" alt="stream">
+            </div>
           </body>
         </html>""")
 
