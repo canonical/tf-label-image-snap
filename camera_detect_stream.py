@@ -19,6 +19,7 @@
 #
 """Obtain images from camera, detect objects, annotate image, stream to webpage."""
 import argparse
+import os
 import sys
 import threading
 import time
@@ -149,8 +150,10 @@ def video_feed():
 @app.route("/")
 def index():
     return render_template_string(
-        """<html lang="en">
+        """<!DOCTYPE html>
+        <html lang=en>
           <head>
+            <meta charset=utf-8>
             <title>TensorFlow Lite stream</title>
           </head>
           <body>
@@ -167,7 +170,7 @@ def main():
         '--model',
         help='Path of the object detection model.',
         required=False,
-        default='efficientdet_lite0.tflite')
+        default=os.getenv('SNAP', '.') + '/efficientdet_lite0.tflite')
     parser.add_argument(
         '--cameraId',
         help='Id of camera.',
@@ -196,7 +199,7 @@ def main():
         '--enableEdgeTPU',
         help='Whether to run the model on EdgeTPU.',
         action='store_true',
-        type=bool,
+        # type=boolean,
         required=False,
         default=False)
     parser.add_argument(
@@ -214,6 +217,9 @@ def main():
         default=8080,
         required=False)
     args = parser.parse_args()
+
+    print("cwd", os.getcwd())
+    print("model", args.model)
 
     # start a thread that will perform object detection
     t = threading.Thread(target=detect_objects,

@@ -14,6 +14,7 @@
 # limitations under the License.
 """Run object detection on images obtained from camera."""
 import argparse
+import os
 import sys
 import time
 
@@ -106,7 +107,7 @@ def main():
         '--model',
         help='Path of the object detection model.',
         required=False,
-        default='efficientdet_lite0.tflite')
+        default=os.getenv('SNAP', '.') + '/efficientdet_lite0.tflite')
     parser.add_argument(
         '--cameraId', help='Id of camera.', required=False, type=int, default=0)
     parser.add_argument(

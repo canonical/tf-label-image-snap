@@ -16,6 +16,12 @@ platforms:
 package-repositories:
   - type: apt
     ppa: deadsnakes/ppa
+  - type: apt
+    components: [main]
+    suites: [coral-edgetpu-stable]
+    # The gpg key for this repo is stored in .snap/keys/DC6315A3.asc as documented at https://snapcraft.io/docs/package-repositories#heading--keyid
+    key-id: 35BAA0B33E9EB396F59CA838C0BA5CE6DC6315A3
+    url: https://packages.cloud.google.com/apt
 
 parts:
   python38:
@@ -26,6 +32,7 @@ parts:
       - python3.8-venv
       - python3-pip
       - libusb-1.0-0
+      - libedgetpu1-std
 
   python-dependencies:
     after: [ python38 ]
@@ -38,13 +45,22 @@ parts:
       - tflite-runtime
       - opencv-python-headless
       - tflite_support
+      - flask
     source: .
+
+  # To install pycoral see https://github.com/tensorflow/tensorflow/issues/53110#issuecomment-977326183
+  pycoral:
+    after: [python38]
+    plugin: nil
+    override-build: |
+      python3.8 -m pip install --extra-index-url https://google-coral.github.io/py-repo/ pycoral~=2.0
 
   scripts:
     plugin: dump
     source: .
     override-build: |
       cp help.py $CRAFT_PART_INSTALL/
+      cp utils.py $CRAFT_PART_INSTALL/
       cp image_label.py $CRAFT_PART_INSTALL/
       cp image_detect.py $CRAFT_PART_INSTALL/
       cp camera_detect.py $CRAFT_PART_INSTALL/
@@ -107,19 +123,30 @@ apps:
   image-detect:
     plugs:
       - home
+      - raw-usb
     command: bin/python3 $SNAP/image_detect.py
 
   camera-detect:
     plugs:
       - home
       - camera
+      - raw-usb
     command: bin/python3 $SNAP/camera_detect.py
 
   camera-detect-stream:
-    plugs:
+    plugs: &_plugs
       - home
       - camera
-    command: bin/python3 $SNAP/camera_detect_stream.py
+      - network-bind
+      - raw-usb
+    command: &_command bin/python3 $SNAP/camera_detect_stream.py
+
+  daemon:
+    daemon: simple
+    restart-delay: 3s
+    restart-condition: always
+    plugs: *_plugs
+    command: *_command
 
   python:
     plugs:
