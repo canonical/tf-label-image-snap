@@ -25,14 +25,6 @@ from tflite_support.task import vision
 import utils
 
 
-# We need to be in the same directory as the script for imports to work correctly
-# abspath = os.path.abspath(__file__)
-# dirname = os.path.dirname(abspath)
-# os.chdir(dirname)
-#
-# importlib.import_module("utils")
-
-
 def run(filename: str, model: str, num_threads: int,
         enable_edgetpu: bool, result_filename: str) -> None:
     """Continuously run inference on images acquired from the camera.

@@ -1,10 +1,13 @@
-# TensorFlow Lite label image snap
+# TensorFlow Lite Examples snap for Ubuntu Core
 
-This snap bundles an example TensorFlow Lite script with all the required dependencies.
-The base of this snap is core24, which is based on Ubuntu 24.04 LTS, with up to 12 years of support.
-The script is based on the [TensorFlow Lite Python image classification demo](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/examples/python).
+This snap bundles example TensorFlow Lite applications with all their required dependencies to run on Ubuntu Core.
+They are based on
+the [TensorFlow Lite Python image classification demo](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/lite/examples/python)
+and the [TensorFlow Lite examples](https://github.com/tensorflow/examples/tree/master/lite/examples).
 
-Core24 ships with Python 3.12, but TensorFlow Lite does not currently work with Python 3.12 due to dependencies that are [not yet updated](https://github.com/tensorflow/tensorflow/issues/62003).
+Core24, which is used for the base of this snap, ships with Python 3.12.
+TensorFlow Lite does not currently work with Python 3.12 due to dependencies that
+are [not yet updated](https://github.com/tensorflow/tensorflow/issues/62003).
 The most reliable combination of dependencies that work on AMD64 and ARM64 are based on Python 3.8.
 This snap includes Python 3.8 from the [deadsnakes PPA](https://launchpad.net/~deadsnakes/+archive/ubuntu/ppa).
 
@@ -24,7 +27,7 @@ Clone this repository and then run the following command in the cloned directory
 snapcraft -v
 ```
 
-We recommend building on Ubuntu Desktop 24.0 or Ubuntu Server 24.04.
+We recommend building on Ubuntu Desktop 24.04 or Ubuntu Server 24.04.
 
 ## Install the snap
 
@@ -33,15 +36,24 @@ snap install --dangerous ./tf-label-image_*.snap
 ```
 
 You also need to connect the camera plug for the camera examples to work:
+
 ```
 sudo snap connect tf-label-image:camera
+```
+
+The snap includes a daemon process that automatically starts when the snap is installed.
+Stop it now until you read the rest of the readme.
+
+```
+sudo snap stop tf-label-image.daemon
 ```
 
 ## How to use
 
 ### Label an image
 
-If the app is run without any arguments, it will use the included `mobilenet v1-1.0-224` model and classify an image of [Grace Hopper](https://en.wikipedia.org/wiki/Grace_Hopper) that is included in the snap.
+If the app is run without any arguments, it will use the included `mobilenet v1-1.0-224` model and classify an image
+of [Grace Hopper](https://en.wikipedia.org/wiki/Grace_Hopper) that is included in the snap.
 
 ```
 $ tf-label-image.image-label
@@ -75,12 +87,95 @@ time: 28.257ms
 tf-label-image.image-detect
 ```
 
-## Advanced usage
-
-This app provides command line arguments to override its default behaviour.
+### Detect objects from a camera
 
 ```
-$ tf-label-image --help
+tf-label-image.camera-detect
+```
+
+### Detect objects from a camera and stream to web
+
+This example captures video frames from `/dev/video0`, does object detection on them, and streams it out to a webpage.
+
+Run the example like this:
+```
+tf-label-image.camera-detect-stream
+```
+
+Then on another device go to `http://<IP Address>:8080`, using the IP address of the device of the device on which the
+snap is running.
+
+You can override the camera by passing the `--cameraId` argument.
+For example to use `/dev/video8` do:
+```
+tf-label-image.camera-detect-stream --cameraId 8
+```
+
+### Daemon process
+
+As mentioned before, this snap includes a daemon process which automatically starts up, unless it's manually stopped.
+This daemon runs the `camera-detect-stream` app as a system service.
+
+To start it up, run:
+
+```
+sudo snap start tf-label-image.daemon
+```
+
+Currently this service can not be configured, so it will always try and use `/dev/video0`.
+
+## Running the example on Ubuntu Core
+
+Starting from a clean Ubuntu Core 24 install.
+
+Copy over snap from another Pi 5 where it was built: 
+
+`scp raspi-b.lan:tf-label-image-snap/tf-label-image_0.0.2_arm64.snap jpm@raspi-a.lan:`
+
+Install snap: `sudo snap install --dangerous ./tf-label-image_0.0.2_arm64.snap`
+
+Check daemon logs: `sudo snap logs -f tf-label-image.daemon`
+
+See Camera index out of range but `ls /dev/video*` shows `video0` exists
+
+Connect camera plug `sudo snap connect tf-label-image:camera`
+
+Restart snap daemon `sudo snap restart tf-label-image.daemon`
+
+You can check logs again to confirm, but it should run now.
+
+On another computer go to the IP address of the device, port 8080, ex: http://192.168.86.31:8080/
+
+### Ubuntu Frame (experimental)
+
+This web interface can also be displayed on the device itself using Ubuntu Frame.
+It is however buggy, so YMMV.
+
+Install Ubuntu Frame and the WPE Web Kiosk snaps: `snap install ubuntu-frame wpe-webkit-mir-kiosk`
+
+Set the URL for the web kiosk: `snap set wpe-webkit-mir-kiosk url=http://localhost:8080`
+
+If you are running a Raspberry Pi 5, and nothing is displayed after the previous command, make sure you are using kms and not fkms.
+See [this issue](https://github.com/canonical/ubuntu-frame/issues/192).
+
+After a reboot, the kiosk browser starts up before the TensorFlow Lite example.
+One needs to manually click refresh in the browser, as the browser loads before our snap.
+
+After a refresh the webpage is displayed, albeit very buggy.
+Updating to a newer version of `wpe-webkit-mir-kiosk` improves things a little bit: 
+
+```
+snap refresh  wpe-webkit-mir-kiosk --candidate
+```
+
+
+## Advanced usage
+
+These apps provide command line arguments to override their default behaviour.
+Run them with the `--help` argument to see available options.
+
+```
+$ tf-label-image.image-label --help
 usage: label_image_lite.py [-h] [-i IMAGE] [-m MODEL_FILE] [-l LABEL_FILE]
                            [--input_mean INPUT_MEAN] [--input_std INPUT_STD]
                            [--num_threads NUM_THREADS] [-e EXT_DELEGATE]
